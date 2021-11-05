@@ -111,3 +111,7 @@ dependencies {
 javadoc {
     options.tags = [ "http.response.details:a:Http Response Details" ]
 }
+
+jar{
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
