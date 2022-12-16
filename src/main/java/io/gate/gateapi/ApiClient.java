@@ -10,6 +10,7 @@
 
 package io.gate.gateapi;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import okhttp3.*;
 import okhttp3.internal.http.HttpMethod;
@@ -74,6 +75,8 @@ public class ApiClient {
     private JSON json;
 
     private HttpLoggingInterceptor loggingInterceptor;
+
+    private Gson gson = new Gson();
 
     /*
      * Basic constructor for ApiClient
@@ -912,6 +915,15 @@ public class ApiClient {
             return new ApiResponse<T>(response.code(), response.headers().toMultimap(), data);
         } catch (IOException e) {
             throw new ApiException(e);
+        }
+    }
+
+    public ApiResponse<String> executeStringType(Call call) throws ApiException {
+        try {
+            Response response = call.execute();
+            return new ApiResponse(response.code(), response.headers().toMultimap(), response.body().string());
+        } catch (IOException var4) {
+            throw new ApiException(var4);
         }
     }
 

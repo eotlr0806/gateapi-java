@@ -10,6 +10,7 @@
 
 package io.gate.gateapi.api;
 
+import com.google.gson.Gson;
 import io.gate.gateapi.ApiCallback;
 import io.gate.gateapi.ApiClient;
 import io.gate.gateapi.ApiException;
@@ -34,6 +35,7 @@ import io.gate.gateapi.models.Ticker;
 import io.gate.gateapi.models.Trade;
 import io.gate.gateapi.models.TradeFee;
 import io.gate.gateapi.models.TriggerOrderResponse;
+import okhttp3.Call;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -43,6 +45,8 @@ import java.util.Map;
 
 public class SpotApi {
     private ApiClient localVarApiClient;
+
+    private Gson gson = new Gson();
 
     public SpotApi() {
         this(Configuration.getDefaultApiClient());
@@ -2101,39 +2105,16 @@ public class SpotApi {
         return localVarCall;
     }
 
-    /**
-     * Create an order
-     * You can place orders with spot, margin or cross margin account through setting the &#x60;account &#x60;field. It defaults to &#x60;spot&#x60;, which means spot account is used to place orders.  When margin account is used, i.e., &#x60;account&#x60; is &#x60;margin&#x60;, &#x60;auto_borrow&#x60; field can be set to &#x60;true&#x60; to enable the server to borrow the amount lacked using &#x60;POST /margin/loans&#x60; when your account&#39;s balance is not enough. Whether margin orders&#39; fill will be used to repay margin loans automatically is determined by the auto repayment setting in your **margin account**, which can be updated or queried using &#x60;/margin/auto_repay&#x60; API.  When cross margin account is used, i.e., &#x60;account&#x60; is &#x60;cross_margin&#x60;, &#x60;auto_borrow&#x60; can also be enabled to achieve borrowing the insufficient amount automatically if cross account&#39;s balance is not enough. But it differs from margin account that automatic repayment is determined by order&#39;s &#x60;auto_repay&#x60; field and only current order&#39;s fill will be used to repay cross margin loans.  Automatic repayment will be triggered when the order is finished, i.e., its status is either &#x60;cancelled&#x60; or &#x60;closed&#x60;.  **Order status**  An order waiting to be filled is &#x60;open&#x60;, and it stays &#x60;open&#x60; until it is filled totally. If fully filled, order is finished and its status turns to &#x60;closed&#x60;.If the order is cancelled before it is totally filled, whether or not partially filled, its status is &#x60;cancelled&#x60;. **Iceberg order**  &#x60;iceberg&#x60; field can be used to set the amount shown. Set to &#x60;-1&#x60; to hide the order completely. Note that the hidden part&#39;s fee will be charged using taker&#39;s fee rate. 
-     * @param order  (required)
-     * @return Order
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table summary="Response Details" border="1">
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 201 </td><td> Order created. </td><td>  -  </td></tr>
-     </table>
-     */
+
     public Order createOrder(Order order) throws ApiException {
-        ApiResponse<Order> localVarResp = createOrderWithHttpInfo(order);
-        return localVarResp.getData();
+        return createOrderWithHttpInfo(order);
     }
 
-    /**
-     * Create an order
-     * You can place orders with spot, margin or cross margin account through setting the &#x60;account &#x60;field. It defaults to &#x60;spot&#x60;, which means spot account is used to place orders.  When margin account is used, i.e., &#x60;account&#x60; is &#x60;margin&#x60;, &#x60;auto_borrow&#x60; field can be set to &#x60;true&#x60; to enable the server to borrow the amount lacked using &#x60;POST /margin/loans&#x60; when your account&#39;s balance is not enough. Whether margin orders&#39; fill will be used to repay margin loans automatically is determined by the auto repayment setting in your **margin account**, which can be updated or queried using &#x60;/margin/auto_repay&#x60; API.  When cross margin account is used, i.e., &#x60;account&#x60; is &#x60;cross_margin&#x60;, &#x60;auto_borrow&#x60; can also be enabled to achieve borrowing the insufficient amount automatically if cross account&#39;s balance is not enough. But it differs from margin account that automatic repayment is determined by order&#39;s &#x60;auto_repay&#x60; field and only current order&#39;s fill will be used to repay cross margin loans.  Automatic repayment will be triggered when the order is finished, i.e., its status is either &#x60;cancelled&#x60; or &#x60;closed&#x60;.  **Order status**  An order waiting to be filled is &#x60;open&#x60;, and it stays &#x60;open&#x60; until it is filled totally. If fully filled, order is finished and its status turns to &#x60;closed&#x60;.If the order is cancelled before it is totally filled, whether or not partially filled, its status is &#x60;cancelled&#x60;. **Iceberg order**  &#x60;iceberg&#x60; field can be used to set the amount shown. Set to &#x60;-1&#x60; to hide the order completely. Note that the hidden part&#39;s fee will be charged using taker&#39;s fee rate. 
-     * @param order  (required)
-     * @return ApiResponse&lt;Order&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table summary="Response Details" border="1">
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 201 </td><td> Order created. </td><td>  -  </td></tr>
-     </table>
-     */
-    public ApiResponse<Order> createOrderWithHttpInfo(Order order) throws ApiException {
+
+    public Order createOrderWithHttpInfo(Order order) throws ApiException {
         okhttp3.Call localVarCall = createOrderValidateBeforeCall(order, null);
-        Type localVarReturnType = new TypeToken<Order>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
+        ApiResponse<String> response = localVarApiClient.executeStringType(localVarCall);
+        return gson.fromJson(response.getData(), Order.class);
     }
 
     /**
@@ -2587,43 +2568,19 @@ public class SpotApi {
         return localVarCall;
     }
 
-    /**
-     * Cancel a single order
-     * Spot and margin orders are cancelled by default. If trying to cancel cross margin orders, &#x60;account&#x60; must be set to &#x60;cross_margin&#x60;
-     * @param orderId Order ID returned, or user custom ID(i.e., &#x60;text&#x60; field). Operations based on custom ID are accepted only in the first 30 minutes after order creation.After that, only order ID is accepted. (required)
-     * @param currencyPair Currency pair (required)
-     * @param account Specify operation account. Default to spot and margin account if not specified. Set to &#x60;cross_margin&#x60; to operate against margin account (optional)
-     * @return Order
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table summary="Response Details" border="1">
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Order cancelled </td><td>  -  </td></tr>
-     </table>
-     */
-    public Order cancelOrder(String orderId, String currencyPair, String account) throws ApiException {
-        ApiResponse<Order> localVarResp = cancelOrderWithHttpInfo(orderId, currencyPair, account);
-        return localVarResp.getData();
+
+    public Map<String,Object> cancelOrder(String orderId, String currencyPair, String account) throws ApiException {
+        return cancelOrderWithHttpInfo(orderId, currencyPair, account);
     }
 
-    /**
-     * Cancel a single order
-     * Spot and margin orders are cancelled by default. If trying to cancel cross margin orders, &#x60;account&#x60; must be set to &#x60;cross_margin&#x60;
-     * @param orderId Order ID returned, or user custom ID(i.e., &#x60;text&#x60; field). Operations based on custom ID are accepted only in the first 30 minutes after order creation.After that, only order ID is accepted. (required)
-     * @param currencyPair Currency pair (required)
-     * @param account Specify operation account. Default to spot and margin account if not specified. Set to &#x60;cross_margin&#x60; to operate against margin account (optional)
-     * @return ApiResponse&lt;Order&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table summary="Response Details" border="1">
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Order cancelled </td><td>  -  </td></tr>
-     </table>
-     */
-    public ApiResponse<Order> cancelOrderWithHttpInfo(String orderId, String currencyPair, String account) throws ApiException {
-        okhttp3.Call localVarCall = cancelOrderValidateBeforeCall(orderId, currencyPair, account, null);
-        Type localVarReturnType = new TypeToken<Order>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
+
+    public Map<String,Object> cancelOrderWithHttpInfo(String orderId, String currencyPair, String account) throws ApiException {
+        Call localVarCall = this.cancelOrderValidateBeforeCall(orderId, currencyPair, account, (ApiCallback)null);
+        ApiResponse<String> response = this.localVarApiClient.executeStringType(localVarCall);
+        return new HashMap<String, Object>(){{
+            put("code", response.getStatusCode());
+            put("message", response.getData());
+        }};
     }
 
     /**
