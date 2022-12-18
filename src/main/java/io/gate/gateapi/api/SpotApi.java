@@ -2053,18 +2053,7 @@ public class SpotApi {
         return new APIlistOrdersRequest(currencyPair, status);
     }
 
-    /**
-     * Build call for createOrder
-     * @param order  (required)
-     * @param _callback Callback for upload/download progress
-     * @return Call to execute
-     * @throws ApiException If fail to serialize the request body object
-     * @http.response.details
-     <table summary="Response Details" border="1">
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 201 </td><td> Order created. </td><td>  -  </td></tr>
-     </table>
-     */
+
     public okhttp3.Call createOrderCall(Order order, final ApiCallback _callback) throws ApiException {
         Object localVarPostBody = order;
 
@@ -2106,15 +2095,18 @@ public class SpotApi {
     }
 
 
-    public Order createOrder(Order order) throws ApiException {
+    public Map<String, String> createOrder(Order order) throws ApiException {
         return createOrderWithHttpInfo(order);
     }
 
 
-    public Order createOrderWithHttpInfo(Order order) throws ApiException {
+    public Map<String, String>  createOrderWithHttpInfo(Order order) throws ApiException {
         okhttp3.Call localVarCall = createOrderValidateBeforeCall(order, null);
         ApiResponse<String> response = localVarApiClient.executeStringType(localVarCall);
-        return gson.fromJson(response.getData(), Order.class);
+        return new HashMap<String, String>(){{
+           put("status", String.valueOf(response.getStatusCode()));
+           put("data", String.valueOf(response.getData()));
+        }};
     }
 
     /**
@@ -2439,65 +2431,17 @@ public class SpotApi {
         return localVarCall;
     }
 
-    /**
-     * Get a single order
-     * Spot and margin orders are queried by default. If cross margin orders are needed, &#x60;account&#x60; must be set to &#x60;cross_margin&#x60;
-     * @param orderId Order ID returned, or user custom ID(i.e., &#x60;text&#x60; field). Operations based on custom ID are accepted only in the first 30 minutes after order creation.After that, only order ID is accepted. (required)
-     * @param currencyPair Currency pair (required)
-     * @param account Specify operation account. Default to spot and margin account if not specified. Set to &#x60;cross_margin&#x60; to operate against margin account (optional)
-     * @return Order
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table summary="Response Details" border="1">
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Detail retrieved </td><td>  -  </td></tr>
-     </table>
-     */
-    public Order getOrder(String orderId, String currencyPair, String account) throws ApiException {
-        ApiResponse<Order> localVarResp = getOrderWithHttpInfo(orderId, currencyPair, account);
-        return localVarResp.getData();
+    public Map<String, String> getOrder(String orderId, String currencyPair, String account) throws ApiException {
+        return getOrderWithHttpInfo(orderId, currencyPair, account);
     }
 
-    /**
-     * Get a single order
-     * Spot and margin orders are queried by default. If cross margin orders are needed, &#x60;account&#x60; must be set to &#x60;cross_margin&#x60;
-     * @param orderId Order ID returned, or user custom ID(i.e., &#x60;text&#x60; field). Operations based on custom ID are accepted only in the first 30 minutes after order creation.After that, only order ID is accepted. (required)
-     * @param currencyPair Currency pair (required)
-     * @param account Specify operation account. Default to spot and margin account if not specified. Set to &#x60;cross_margin&#x60; to operate against margin account (optional)
-     * @return ApiResponse&lt;Order&gt;
-     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
-     * @http.response.details
-     <table summary="Response Details" border="1">
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Detail retrieved </td><td>  -  </td></tr>
-     </table>
-     */
-    public ApiResponse<Order> getOrderWithHttpInfo(String orderId, String currencyPair, String account) throws ApiException {
+    public Map<String, String> getOrderWithHttpInfo(String orderId, String currencyPair, String account) throws ApiException {
         okhttp3.Call localVarCall = getOrderValidateBeforeCall(orderId, currencyPair, account, null);
-        Type localVarReturnType = new TypeToken<Order>(){}.getType();
-        return localVarApiClient.execute(localVarCall, localVarReturnType);
-    }
-
-    /**
-     * Get a single order (asynchronously)
-     * Spot and margin orders are queried by default. If cross margin orders are needed, &#x60;account&#x60; must be set to &#x60;cross_margin&#x60;
-     * @param orderId Order ID returned, or user custom ID(i.e., &#x60;text&#x60; field). Operations based on custom ID are accepted only in the first 30 minutes after order creation.After that, only order ID is accepted. (required)
-     * @param currencyPair Currency pair (required)
-     * @param account Specify operation account. Default to spot and margin account if not specified. Set to &#x60;cross_margin&#x60; to operate against margin account (optional)
-     * @param _callback The callback to be executed when the API call finishes
-     * @return The request call
-     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-     * @http.response.details
-     <table summary="Response Details" border="1">
-        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 200 </td><td> Detail retrieved </td><td>  -  </td></tr>
-     </table>
-     */
-    public okhttp3.Call getOrderAsync(String orderId, String currencyPair, String account, final ApiCallback<Order> _callback) throws ApiException {
-        okhttp3.Call localVarCall = getOrderValidateBeforeCall(orderId, currencyPair, account, _callback);
-        Type localVarReturnType = new TypeToken<Order>(){}.getType();
-        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
-        return localVarCall;
+        ApiResponse<String> response = localVarApiClient.executeStringType(localVarCall);
+        return new HashMap<String, String>(){{
+            put("status", String.valueOf(response.getStatusCode()));
+            put("data", String.valueOf(response.getData()));
+        }};
     }
 
     /**
